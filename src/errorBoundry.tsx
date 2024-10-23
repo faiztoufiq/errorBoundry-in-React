@@ -1,49 +1,33 @@
-import React, { Component, ReactNode } from "react";
-import ErrorFile from "../src/errorFile/page";
-
+import React, { useEffect, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+import { text } from "./common/constants";
+import { routes } from "./common/routes";
 interface ErrorBoundaryProps {
   children: ReactNode;
 }
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error?: string;
-  errorInfo?: string;
-}
+const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children }) => {
+  const navigate = useNavigate();
 
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  useEffect(() => {
+    const handleGlobalError = (event: ErrorEvent) => {
+      const error = event.error || new Error(text.unknownError);
+      const stack = error.stack || text.noStackTraceAvailable;
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return {
-      hasError: true,
-      error: error.message,
-      errorInfo: error.stack,
+      navigate(routes.error, {
+        state: { error: error.message, errorInfo: stack },
+        replace: true,
+      });
     };
-  }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    console.error("Error caught in ErrorBoundary: ", error, errorInfo);
-    logErrorToMyService(error, errorInfo);
+    window.addEventListener("error", handleGlobalError);
 
-    window.history.pushState({}, "", "/something-went-wrong");
-  }
+    return () => {
+      window.removeEventListener("error", handleGlobalError);
+    };
+  }, [navigate]);
 
-  render() {
-    if (this.state.hasError) {
-      return (
-        <ErrorFile error={this.state.error} errorInfo={this.state.errorInfo} />
-      );
-    }
+  return <>{children}</>;
+};
 
-    return this.props.children;
-  }
-}
-
-function logErrorToMyService(error: Error, errorInfo: React.ErrorInfo) {}
+export default ErrorBoundary;

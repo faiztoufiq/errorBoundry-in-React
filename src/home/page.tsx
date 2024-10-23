@@ -2,15 +2,9 @@ import React, { useState } from "react";
 import { text } from "../common/constants";
 
 const Home: React.FC = () => {
-  const [shouldThrowError, setShouldThrowError] = useState(false);
-
   const handleErrorClick = () => {
-    setShouldThrowError(true);
+    throw new Error(text.testButtonClick);
   };
-
-  if (shouldThrowError) {
-    throw new Error("Test Error from button click");
-  }
 
   return (
     <div className="flex gap-10 justify-center items-center h-screen">

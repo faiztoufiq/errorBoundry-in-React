@@ -1,14 +1,17 @@
-import Home from "../src/home/page";
-import { ErrorBoundary } from "./errorBoundry";
+import { BrowserRouter as Router } from "react-router-dom";
+import AppRoutes from "./routes";
 import "./App.css";
+import { ErrorProvider } from "./context/errorContext";
 
 function App() {
   return (
-    <div className="App">
-      <ErrorBoundary>
-        <Home />
-      </ErrorBoundary>
-    </div>
+    <Router>
+      <div className="App">
+        <ErrorProvider>
+          <AppRoutes />
+        </ErrorProvider>
+      </div>
+    </Router>
   );
 }
 

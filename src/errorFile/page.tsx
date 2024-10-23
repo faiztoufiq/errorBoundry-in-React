@@ -1,13 +1,11 @@
-import React from "react";
 import errorImage from "../assets/errorImage.png";
 import { text } from "../common/constants";
-interface ErrorFileProps {
-  error?: string;
-  errorInfo?: string;
-}
+import { useLocation } from "react-router-dom";
 
-const ErrorFile: React.FC<ErrorFileProps> = ({ error, errorInfo }) => {
-    
+export const ErrorFile = () => {
+  const location = useLocation();
+  const { error, errorInfo } = location.state || {};
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="flex flex-col items-center">
@@ -16,10 +14,10 @@ const ErrorFile: React.FC<ErrorFileProps> = ({ error, errorInfo }) => {
         </div>
         <div className="text-center">
           <p className="text-gray-400">
-            {text.Error} {error || "Unknown error"}
+            {text.Error} {error || text.unknownError}
           </p>
           <p className="text-gray-400">
-            {text.errorInfo} {errorInfo || "No additional information"}
+            {text.errorInfo} {errorInfo || text.noAdditionalInformation}
           </p>
         </div>
       </div>
